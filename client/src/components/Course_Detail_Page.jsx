@@ -1,36 +1,34 @@
 import axios from "axios";
 import { courses_end_points } from "../api/endpoints/courses_endpoints";
 import toast from "react-hot-toast";
-import { use_course_store } from "../stores/use_course_store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const Course_Detail_Page = () => {
 
-    // const {set_token, course_id} = use_course_store();
     const {id} = useParams();
-
+    const [course_details, set_course_details] = useState({});
     useEffect(()=>{
         const fetch_data = async () => {
             try {
-    
-                const response = await axios.get(courses_end_points.get_course_details(id), null);
-                console.log(response);
+                const token = localStorage.getItem('token');
+                const response = await axios.get(courses_end_points.get_course_details(id),{
+                    headers: {
+                        "Authorization": token
+                    }
+                });
+                console.log("Test:",response);
+                console.log(response.data.data.instructor);
                 
-    
-                // set_token(response?.token);
-                if (response?.data?.success) {
-                    // set_token(response?.data?.token);
+                    if (response?.data?.success) {
                     toast.success(response?.data?.message);
-                    
-                    // localStorage.setItem('token', response?.token);
-                    // localStorage.setItem('token', response?.data?.token);
-                    // navigate('/profile');
-    
-                    // window.location.reload();
+                    set_course_details(response.data.data);
+                    // console.log(response.data);
+                    // return response;
                 } else {
                     toast.message(response?.data?.message);
                 }
+                
             }
             catch (error) {
                 toast.error("Invalid credentials");
@@ -39,7 +37,7 @@ const Course_Detail_Page = () => {
 
         fetch_data();
 
-    });
+    },[id]);
 
     
 
@@ -59,9 +57,9 @@ const Course_Detail_Page = () => {
                         />
                     </div>
                     <div className="w-full sm:w-3/5 py-2 px-5">
-                        <h1 className="text-3xl font-bold mb-2">MERN Stack Complete Course</h1>
-                        <p className="text-2xl italic mb-2">Talha</p>
-                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                        <h1 className="text-3xl font-bold mb-2">{course_details.title}</h1>
+                        <p className="text-2xl italic mb-2">{course_details.instructor}</p>
+                        <p>{course_details.description}</p>
                         <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded animate-blink mt-5 mb-5">
                             Enroll Now
                         </button>
