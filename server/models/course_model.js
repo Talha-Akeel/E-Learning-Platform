@@ -28,7 +28,7 @@ const course_model = new Schema({
   },
   category: {
     type: String,
-    ref: "Categories"
+    required: true
   }
 });
 

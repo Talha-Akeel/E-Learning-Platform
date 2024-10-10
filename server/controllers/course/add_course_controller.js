@@ -7,11 +7,17 @@ const add_course = async (req, res) => {
     const { course_image } = req.files;
 
     const new_course = new course_model({ title, description, instructor, price, category });
+    console.log(new_course);
 
+    if(course_image){
     new_course.course_image.data = fs.readFileSync(course_image.path);
     new_course.course_image.contentType = course_image.type;
+    }
 
+    
     await new_course.save();
+    
+    
 
     res.status(201).send({
         success: true,

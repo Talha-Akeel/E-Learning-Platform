@@ -1,12 +1,15 @@
+const { decode } = require("jsonwebtoken");
 const { decode_token } = require("../utils/jwt_utils");
 
 const auth_middleware = (req, res, next) => {
   try {
-    const token = req.headers.authorization;
+    const token = req.cookies.token;
+    console.log(req.cookies.token);
+    console.log(decode(token));
+    
     
     const decoded_info = decode_token(token);
     if (decoded_info) {
-      // console.log(decoded_info);
       
       req.userId = decoded_info;
       next();

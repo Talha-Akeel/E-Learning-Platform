@@ -5,7 +5,7 @@ const { auth_middleware } = require('../middlewares/auth_middleware');
 
 const router = express.Router();
 
-router.post('/category', auth_middleware, add_category);
-router.get('/category', auth_middleware, get_category_info);
+// router.post('/category', auth_middleware, add_category);
+// router.get('/category', auth_middleware, get_category_info);
 
 module.exports = router;

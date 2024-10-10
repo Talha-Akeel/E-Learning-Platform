@@ -1,21 +1,22 @@
 import axios from "axios";
-import { courses_end_points } from "../api/endpoints/courses_endpoints";
+import { courses_end_points } from "../../api/endpoints/courses_endpoints";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-const Course_Detail_Page = () => {
+const CourseDetails = () => {
 
     const {id} = useParams();
     const [course_details, set_course_details] = useState({});
+    const [course_image, set_course_image] = useState({});
     useEffect(()=>{
         const fetch_data = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get(courses_end_points.get_course_details(id),{
                     headers: {
-                        "Authorization": token
-                    }
+                        "Content-Type": "application/json"
+                    },
+                    withCredentials: true
                 });
                 console.log("Test:",response);
                 console.log(response.data.data.instructor);
@@ -35,7 +36,35 @@ const Course_Detail_Page = () => {
             }
         }
 
+        const fetch_image_data = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(courses_end_points.get_course_image(id),{
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    withCredentials: true
+                });
+                console.log("Test:",response);
+                console.log(response.data.data.instructor);
+                
+                    if (response?.data?.success) {
+                    toast.success(response?.data?.message);
+                    set_course_image(response.data.data);
+                    // console.log(response.data);
+                    // return response;
+                } else {
+                    toast.message(response?.data?.message);
+                }
+                
+            }
+            catch (error) {
+                toast.error("Invalid credentials");
+            }
+        }
+
         fetch_data();
+        fetch_image_data();
 
     },[id]);
 
@@ -48,8 +77,9 @@ const Course_Detail_Page = () => {
             <div className="container w-[90%] sm:w-3/4 mx-auto mt-10 bg-green-300 rounded-xl">
                 <div className="sm:flex">
                     <div className="w-full sm:w-2/5">
+                    {}
                         <img
-                            src="https://worldscholarshipforum.com/wp-content/uploads/2024/07/web-development-courses.jpg"
+                            src={courses_end_points.get_course_image(id)}
                             alt="Shoes"
                             className="rounded-xl h-full w-full object-cover"
                         // width={450}
@@ -57,9 +87,9 @@ const Course_Detail_Page = () => {
                         />
                     </div>
                     <div className="w-full sm:w-3/5 py-2 px-5">
-                        <h1 className="text-3xl font-bold mb-2">{course_details.title}</h1>
-                        <p className="text-2xl italic mb-2">{course_details.instructor}</p>
-                        <p>{course_details.description}</p>
+                        <h1 className="text-3xl font-bold mb-2">Name : {course_details.title}</h1>
+                        <p className="text-2xl italic mb-2">Instructor : {course_details.instructor}</p>
+                        <p>Description: {course_details.description}</p>
                         <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded animate-blink mt-5 mb-5">
                             Enroll Now
                         </button>
@@ -103,4 +133,4 @@ const Course_Detail_Page = () => {
     );
 };
 
-export default Course_Detail_Page;
+export default CourseDetails;

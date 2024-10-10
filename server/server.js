@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
+dotenv.config();
 const cors = require("cors");
 const connect_database = require("./db/config");
 const express_formidable = require("express-formidable");
+const cookieParser = require('cookie-parser');
 
 const user_router = require("./routes/users_route");
 const course_router = require("./routes/course_route");
@@ -13,12 +15,17 @@ const comment_router = require("./routes/comment_route");
 const comment_reply_router = require("./routes/comment_reply_route");
 const enrollment_router = require("./routes/enrollment_route");
 
-dotenv.config();
-
 const port = process.env.PORT;
 
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://online-learning-platform.com',
+    credentials: true,
+};
+
 app.use(express_formidable());
-app.use(cors());
+app.options('*', cors(corsOptions));
+app.use(cors(corsOptions));
+app.use(cookieParser());
 
 app.use('/api/v1/users', user_router);
 app.use('/api/v1/courses', course_router);

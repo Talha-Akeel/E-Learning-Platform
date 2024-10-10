@@ -5,7 +5,7 @@ const get_course_details = async (req, res) => {
     const { id } = req.params;
 
     const course = await course_model.findById(id).select("-course_image");
-    console.log(course);
+    // console.log(course);
     
     if (course) {
       res.status(200).send({

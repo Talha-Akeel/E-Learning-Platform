@@ -1,4 +1,4 @@
-const Signup_Page = () => {
+const Signup = () => {
 
     return (
         <div className="flex justify-center items-center bg-blue-500 max-h-screen min-h-screen" style={{ height: "610px" }}>
@@ -37,4 +37,4 @@ const Signup_Page = () => {
     );
 };
 
-export default Signup_Page;
+export default Signup;

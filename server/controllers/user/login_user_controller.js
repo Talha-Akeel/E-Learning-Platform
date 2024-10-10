@@ -10,10 +10,18 @@ const login_user = async (req, res) => {
     if (user) {
       const is_password_correct = await compare_password(password, user.password);
       if (is_password_correct) {
+        const token = generate_token({ id: user._id });
+
+        res.cookie('token', token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'Strict',
+          maxAge: 1000 * 60 * 60 * 12
+        });
+
         res.status(200).send({
           success: true,
           message: "User logged in succesfully!",
-          token: generate_token({ id: user._id }),
         });
       } else {
         res.status(400).send({

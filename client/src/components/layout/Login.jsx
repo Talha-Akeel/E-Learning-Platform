@@ -1,20 +1,20 @@
 import { useNavigate } from "react-router-dom";
-import { use_user_store } from "../stores/use_user_store";
 import { useFormik } from "formik";
-import { login_schema } from "../schemas";
-import { users_end_points } from "../api/endpoints/user_endpoints";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { use_user_store } from "../../stores/use_user_store";
+import { login_schema } from "../../schemas";
+import { users_end_points } from "../../api/endpoints/user_endpoints";
 
 const initialValues = {
     email: "",
     password: "",
 }
 
-const Login_Page = () => {
+const Login = () => {
 
     const navigate = useNavigate();
-    const { set_token } = use_user_store();
+    const { is_authenticated, set_is_authenticated } = use_user_store();
 
     const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
         initialValues: initialValues,
@@ -23,16 +23,23 @@ const Login_Page = () => {
             try {
                 console.log(values);
 
-                const response = await axios.post(users_end_points.login_users(), { email: values.email, password: values.password });
+                const response = await axios.post(users_end_points.login_users(), { email: values.email, password: values.password },{
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    withCredentials: true
+                  }
+            );
                 console.log(response);
                 
 
                 // set_token(response?.token);
                 if (response?.data?.success) {
-                    set_token(response?.data?.token);
+                    // set_token(response?.data?.token);
                     toast.success(response?.data?.message);
-                    // localStorage.setItem('token', response?.token);
-                    localStorage.setItem('token', response?.data?.token);
+                    set_is_authenticated(true);
+                    // localStorage.setItem('token', 1);
+                    // localStorage.setItem('token', response?.data?.token);
                     navigate('/');
 
                     // window.location.reload();
@@ -100,4 +107,4 @@ const Login_Page = () => {
     );
 };
 
-export default Login_Page;
+export default Login;
